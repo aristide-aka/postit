@@ -6,8 +6,9 @@ import Card from './components/card.vue';
 </script>
 
 <template>
-  <NavBar />
-  <Form />
-  <Card />
-  <Footer />
+  <header>
+	<NavBar/>
+</header>
+<RouterView/>
+<Footer/>
 </template>
