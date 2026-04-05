@@ -5,6 +5,8 @@ import { ref, onMounted } from 'vue'
 const postits = ref([])
 const title = ref('')
 const content = ref('')
+const showMessage = ref(false)
+const messageText = ref('')
 
 // Charger au démarrage
 onMounted(() => {
@@ -17,9 +19,20 @@ const save = () => {
   localStorage.setItem('postits', JSON.stringify(postits.value))
 }
 
+const AddMessage = (title) => {
+  showMessage.value = true
+  messageText.value = `Postit "${title}" ajouté avec succès !`
+  setTimeout(() => {
+    showMessage.value = false
+  }, 3000)
+}
+
 // Ajouter
 const add = () => {
-  if (!title.value || !content.value) return
+  if (!title.value || !content.value){
+    alert("remplissez tous les champs")
+    return
+  }
   postits.value.unshift({
     id: Date.now(),
     title: title.value,
@@ -29,16 +42,19 @@ const add = () => {
   save()
   title.value = ''
   content.value = ''
+  showMessage.value = true
+  AddMessage(title.value)
 }
 
-// Supprimer
-const remove = (id) => {
-  postits.value = postits.value.filter(p => p.id !== id)
-  save()
-}
 </script>
 
 <template>
+      <div 
+      v-if="showMessage"
+      class="rounded-lg shadow-lg bg-green-200 text-slate-700 font-semibold animate-fade-in flex justify-center"
+    >
+      {{ messageText}}
+    </div>
   <form @submit.prevent="add">
     <div class="w-lg m-auto mt-3">
       <h1 class="text-xl font-bold mb-2">ADD POSTIT +</h1>
