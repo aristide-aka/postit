@@ -2,17 +2,13 @@
 </script>
 
 <template>
-   <footer class="bg-gray-800 text-white py-4 px-3 mt-16">
-    <div class="container mx-auto flex flex-wrap items-center justify-between">
-        <div class="w-full md:w-1/2 md:text-center md:mb-0 mb-8">
-            <p class="text-xs text-gray-400 md:text-sm">Copyright 2026 &copy; All Rights Reserved</p>
-        </div>
-        <div class="w-full md:w-1/2 md:text-center md:mb-0 mb-8">
-            <ul class="list-reset flex justify-center flex-wrap text-xs md:text-sm gap-3">
-                <li><a href="#" class="text-gray-400 hover:text-white">Home</a></li>
-                <li class="mx-4"><a href="#" class="text-gray-400 hover:text-white">Add Postit</a></li>
-            </ul>
-        </div>
+  <footer class="bg-stone-900 text-stone-400 py-4 px-4 sm:px-6 mt-16">
+    <div class="container mx-auto flex flex-wrap items-center justify-between gap-2 text-xs sm:text-sm">
+      <p>Copyright 2026 &copy; My Postit — All Rights Reserved</p>
+      <ul class="flex gap-4">
+        <li><RouterLink to="/" class="hover:text-white transition">Accueil</RouterLink></li>
+        <li><RouterLink :to="{ name: 'ajouter' }" class="hover:text-white transition">Ajouter un post-it</RouterLink></li>
+      </ul>
     </div>
-</footer>
+  </footer>
 </template>

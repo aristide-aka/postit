@@ -1,67 +1,74 @@
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref } from 'vue'
+import { useRouter } from 'vue-router'
+import { usePostits } from '../composables/usePostits'
+import { useToast } from '../composables/useToast'
 
-// Données
-const postits = ref([])
+const router = useRouter()
+const { addPostit } = usePostits()
+const { show } = useToast()
+
 const title = ref('')
 const content = ref('')
-const showMessage = ref(false)
-const messageText = ref('')
+const submitting = ref(false)
 
-// Charger au démarrage
-onMounted(() => {
-  const saved = localStorage.getItem('postits')
-  if (saved) postits.value = JSON.parse(saved)
-})
-
-// Sauvegarder
-const save = () => {
-  localStorage.setItem('postits', JSON.stringify(postits.value))
-}
-
-const AddMessage = (title) => {
-  showMessage.value = true
-  messageText.value = `Postit "${title}" ajouté avec succès !`
-  setTimeout(() => {
-    showMessage.value = false
-  }, 3000)
-}
-
-// Ajouter
-const add = () => {
-  if (!title.value || !content.value){
-    alert("remplissez tous les champs")
+const add = async () => {
+  if (!title.value.trim() || !content.value.trim()) {
+    show('Merci de remplir tous les champs.', 'error')
     return
   }
-  postits.value.unshift({
-    id: Date.now(),
-    title: title.value,
-    content: content.value,
-    date: new Date().toLocaleString()
-  })
-  save()
-  title.value = ''
-  content.value = ''
-  showMessage.value = true
-  AddMessage(title.value)
-}
 
+  submitting.value = true
+  try {
+    const postit = await addPostit(title.value, content.value)
+    title.value = ''
+    content.value = ''
+    show(`Post-it "${postit.title}" ajouté avec succès !`)
+    router.push('/')
+  } catch (err) {
+    console.error(err)
+    show("Impossible d'enregistrer le post-it.", 'error')
+  } finally {
+    submitting.value = false
+  }
+}
 </script>
 
 <template>
-      <div 
-      v-if="showMessage"
-      class="rounded-lg shadow-lg bg-green-200 text-slate-700 font-semibold animate-fade-in flex justify-center"
-    >
-      {{ messageText}}
-    </div>
-  <form @submit.prevent="add">
-    <div class="w-lg m-auto mt-3">
-      <h1 class="text-xl font-bold mb-2">ADD POSTIT +</h1>
-      <div class="flex flex-col gap-2">
-        <input v-model="title" type="text" class="w-full bg-transparent placeholder:text-slate-400 text-slate-700 text-sm border border-slate-200 rounded-md pl-3 pr-16 py-2" placeholder="Entre le Nom" />
-        <textarea v-model="content" rows="4" class="bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base block w-full p-3.5" placeholder="Write your thoughts here..."></textarea>
-        <button type="submit" class="rounded bg-slate-800 py-1 px-2.5 text-sm text-white">Ajouter</button>
+  <form @submit.prevent="add" class="w-full max-w-lg mx-auto mt-8 px-4">
+    <div class="bg-white rounded-2xl border border-stone-200 shadow-sm p-6 sm:p-8">
+      <h1 class="text-xl font-bold text-stone-800 mb-6">Nouveau post-it</h1>
+
+      <div class="flex flex-col gap-4">
+        <div>
+          <label for="postit-title" class="block text-sm font-medium text-stone-600 mb-1">Titre</label>
+          <input
+            id="postit-title"
+            v-model="title"
+            type="text"
+            class="w-full bg-stone-50 placeholder:text-stone-400 text-stone-800 text-sm border border-stone-200 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-amber-400 focus:border-transparent"
+            placeholder="Titre du post-it"
+          />
+        </div>
+
+        <div>
+          <label for="postit-content" class="block text-sm font-medium text-stone-600 mb-1">Contenu</label>
+          <textarea
+            id="postit-content"
+            v-model="content"
+            rows="5"
+            class="w-full bg-stone-50 border border-stone-200 text-stone-800 text-sm rounded-md p-3.5 focus:outline-none focus:ring-2 focus:ring-amber-400 focus:border-transparent"
+            placeholder="Écris ton idée ici..."
+          ></textarea>
+        </div>
+
+        <button
+          type="submit"
+          :disabled="submitting"
+          class="rounded-md bg-amber-400 hover:bg-amber-300 disabled:opacity-60 disabled:cursor-not-allowed py-2 px-4 text-sm font-semibold text-stone-900 transition"
+        >
+          {{ submitting ? 'Ajout...' : 'Ajouter le post-it' }}
+        </button>
       </div>
     </div>
   </form>
