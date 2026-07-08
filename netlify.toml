@@ -1,0 +1,11 @@
+[build]
+  base = "postit"
+  command = "npm run build"
+  publish = "dist"
+
+# L'app utilise vue-router en mode "history" (URLs sans #) :
+# sans cette règle, un rafraîchissement sur /detail/xxx ou /modifier/xxx renverrait un 404.
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
