@@ -3,6 +3,20 @@
   command = "npm run build"
   publish = "dist"
 
+[functions]
+  directory = "netlify/functions"
+
+# API des post-it (Netlify Blobs), doit être déclarée avant le catch-all SPA ci-dessous.
+[[redirects]]
+  from = "/api/postits/*"
+  to = "/.netlify/functions/postits/:splat"
+  status = 200
+
+[[redirects]]
+  from = "/api/postits"
+  to = "/.netlify/functions/postits"
+  status = 200
+
 # L'app utilise vue-router en mode "history" (URLs sans #) :
 # sans cette règle, un rafraîchissement sur /detail/xxx ou /modifier/xxx renverrait un 404.
 [[redirects]]

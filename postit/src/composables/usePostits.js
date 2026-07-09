@@ -1,5 +1,5 @@
 import { reactive } from 'vue'
-import { getAllPostits, putPostit, deletePostit } from '../db/postitsDb'
+import { getAllPostits, putPostit, deletePostit } from '../db/postitsApi'
 
 // État partagé (singleton) : tous les composants lisent/écrivent
 // la même source de vérité au lieu de dupliquer la logique de persistance.
